@@ -14,12 +14,17 @@ import os
 
 warnings.filterwarnings('ignore')
 
+# --- Ensure log directory exists (works locally & on Streamlit Cloud) ---
+LOG_DIR = Path("logs") / "application"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+LOG_FILE = LOG_DIR / "system.log"
+
 # Configure enterprise logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("logs/application/system.log"),
+        logging.FileHandler(LOG_FILE),
         logging.StreamHandler()
     ]
 )
