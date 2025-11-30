@@ -63,12 +63,27 @@ class LogisticsProEnterprise:
         /* Hide Streamlit chrome we don't want */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-        /* DO NOT hide the header, it holds the sidebar toggle */
+        /* DO NOT hide the header, it holds the sidebar toggle (especially on mobile) */
         /* header {visibility: hidden;} */
         .stDeployButton {visibility: hidden;}
 
-        /* 🔒 Hide the top-right toolbar (Share, star, edit, GitHub) */
-        [data-testid="stToolbar"] {
+        /* 🔒 Hide Streamlit's default multipage navigation ("app / Welcome / Dashboard") */
+        section[data-testid="stSidebarNav"] {
+            display: none !important;
+        }
+
+        /* Keep header & toolbar for sidebar toggle, but hide GitHub/share/edit icons */
+
+        /* GitHub repo icon/link */
+        header a[href*="github.com"],
+        header a[aria-label="View source on GitHub"] {
+            display: none !important;
+        }
+
+        /* "Edit app" pencil / Share button / similar controls */
+        header button[title*="Edit"],
+        header button[title*="Share"],
+        header [data-testid="stShareButton"] {
             display: none !important;
         }
 
@@ -127,6 +142,14 @@ class LogisticsProEnterprise:
         .streamlit-expanderHeader[aria-expanded="true"] {
             border-left-color: #1f77b4 !important;
             background-color: #e0f2fe !important;
+        }
+
+        /* Ensure header (with sidebar toggle) is always visible on small screens */
+        @media (max-width: 768px) {
+            header, [data-testid="stHeader"] {
+                visibility: visible !important;
+                display: block !important;
+            }
         }
         </style>
         """, unsafe_allow_html=True)
