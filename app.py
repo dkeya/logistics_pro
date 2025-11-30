@@ -59,7 +59,8 @@ class LogisticsProEnterprise:
         /* Hide Streamlit chrome we don't want */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-        header {visibility: hidden;}
+        /* DO NOT hide the header, it holds the sidebar toggle */
+        /* header {visibility: hidden;} */
         .stDeployButton {visibility: hidden;}
 
         /* Main theme colors */
