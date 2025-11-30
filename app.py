@@ -1,4 +1,4 @@
-﻿# logistics_pro/app.py 
+﻿# logistics_pro/app.py
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -19,6 +19,9 @@ LOG_DIR = Path("logs") / "application"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 LOG_FILE = LOG_DIR / "system.log"
 
+# Package name for our custom pages (folder renamed from `pages` → `lp_pages`)
+APP_PAGES_PACKAGE = "lp_pages"
+
 # Configure enterprise logging
 logging.basicConfig(
     level=logging.INFO,
@@ -29,6 +32,7 @@ logging.basicConfig(
     ]
 )
 logger = logging.getLogger(__name__)
+
 
 class LogisticsProEnterprise:
     """Main application class for Logistics Pro enterprise platform"""
@@ -156,7 +160,7 @@ class LogisticsProEnterprise:
                 except ImportError:
                     from logistics_core.connectors.data_generator import LogisticsProDataGenerator
                     st.session_state.data_gen = LogisticsProDataGenerator()
-                
+
                 st.session_state.analytics = AnalyticsEngine(st.session_state.data_gen)
             logger.info(f"Data initialized for tenant: {st.session_state.tenant_id}")
         except Exception as e:
@@ -173,63 +177,96 @@ class LogisticsProEnterprise:
         """Get available tenants for multi-tenancy"""
         return {
             "ELORA Holding": "elora_holding",
-            "Nakumatt Holdings": "nakumatt_holdings", 
+            "Nakumatt Holdings": "nakumatt_holdings",
             "QuickMart Kenya": "quickmart_kenya",
             "Tuskys Supermarkets": "tuskys_supermarkets"
         }
 
     def get_page_categories(self):
-        """Define the page categories and their modules - UPDATED WITH WELCOME PAGE"""
+        """Define the page categories and their modules - using lp_pages"""
+        base = APP_PAGES_PACKAGE  # "lp_pages"
+
         return {
             "🎯 Welcome & Onboarding": [
-                {"name": "🏠 Welcome Center", "module": "00_Welcome", "path": "pages.00_Welcome"}
+                {"name": "🏠 Welcome Center", "module": "00_Welcome", "path": f"{base}.00_Welcome"}
             ],
             "📊 Executive Cockpit": [
-                {"name": "🏠 Main Dashboard", "module": "01_Dashboard", "path": "pages.01_Dashboard"}
+                {"name": "🏠 Main Dashboard", "module": "01_Dashboard", "path": f"{base}.01_Dashboard"}
             ],
             "📈 Sales Intelligence": [
-                {"name": "🎯 Revenue Command Center", "module": "02_Revenue_Command_Center", "path": "pages.sales.02_Revenue_Command_Center"},
-                {"name": "💰 Revenue Analytics", "module": "03_Revenue_Analytics", "path": "pages.sales.03_Revenue_Analytics"},
-                {"name": "👥 Customer Segmentation", "module": "04_Customer_Segmentation", "path": "pages.sales.04_Customer_Segmentation"},
-                {"name": "🌍 Regional Performance", "module": "05_Regional_Performance", "path": "pages.sales.05_Regional_Performance"},
-                {"name": "📦 Product Performance", "module": "06_Product_Performance", "path": "pages.sales.06_Product_Performance"}
+                {"name": "🎯 Revenue Command Center", "module": "02_Revenue_Command_Center", "path": f"{base}.sales.02_Revenue_Command_Center"},
+                {"name": "💰 Revenue Analytics", "module": "03_Revenue_Analytics", "path": f"{base}.sales.03_Revenue_Analytics"},
+                {"name": "👥 Customer Segmentation", "module": "04_Customer_Segmentation", "path": f"{base}.sales.04_Customer_Segmentation"},
+                {"name": "🌍 Regional Performance", "module": "05_Regional_Performance", "path": f"{base}.sales.05_Regional_Performance"},
+                {"name": "📦 Product Performance", "module": "06_Product_Performance", "path": f"{base}.sales.06_Product_Performance"},
             ],
             "📦 Inventory Intelligence": [
-                {"name": "🏥 Stock Health Dashboard", "module": "07_Inventory_Health", "path": "pages.inventory.07_Inventory_Health"},
-                {"name": "🔍 ABC-XYZ Analysis", "module": "08_Inventory_ABC", "path": "pages.inventory.08_Inventory_ABC"},
-                {"name": "⏰ Expiry Management", "module": "09_Inventory_Expiry", "path": "pages.inventory.09_Inventory_Expiry"},
-                {"name": "🔄 Smart Replenishment", "module": "10_Inventory_Replenishment", "path": "pages.inventory.10_Inventory_Replenishment"}
+                {"name": "🏥 Stock Health Dashboard", "module": "07_Inventory_Health", "path": f"{base}.inventory.07_Inventory_Health"},
+                {"name": "🔍 ABC-XYZ Analysis", "module": "08_Inventory_ABC", "path": f"{base}.inventory.08_Inventory_ABC"},
+                {"name": "⏰ Expiry Management", "module": "09_Inventory_Expiry", "path": f"{base}.inventory.09_Inventory_Expiry"},
+                {"name": "🔄 Smart Replenishment", "module": "10_Inventory_Replenishment", "path": f"{base}.inventory.10_Inventory_Replenishment"},
             ],
             "🚛 Logistics Intelligence": [
-                {"name": "🎯 OTIF Performance", "module": "11_Logistics_OTIF", "path": "pages.logistics.11_Logistics_OTIF"},
-                {"name": "🔄 Route Optimization", "module": "12_Logistics_Routes", "path": "pages.logistics.12_Logistics_Routes"},
-                {"name": "🚚 Fleet Utilization", "module": "13_Logistics_Fleet", "path": "pages.logistics.13_Logistics_Fleet"},
-                {"name": "💰 Cost Analysis", "module": "14_Logistics_Costs", "path": "pages.logistics.14_Logistics_Costs"}
+                {"name": "🎯 OTIF Performance", "module": "11_Logistics_OTIF", "path": f"{base}.logistics.11_Logistics_OTIF"},
+                {"name": "🔄 Route Optimization", "module": "12_Logistics_Routes", "path": f"{base}.logistics.12_Logistics_Routes"},
+                {"name": "🚚 Fleet Utilization", "module": "13_Logistics_Fleet", "path": f"{base}.logistics.13_Logistics_Fleet"},
+                {"name": "💰 Cost Analysis", "module": "14_Logistics_Costs", "path": f"{base}.logistics.14_Logistics_Costs"},
             ],
             "🤝 Procurement Intelligence": [
-                {"name": "🏆 Supplier Scorecards", "module": "15_Procurement_Suppliers", "path": "pages.procurement.15_Procurement_Suppliers"},
-                {"name": "💰 Cost Optimization", "module": "16_Procurement_Costs", "path": "pages.procurement.16_Procurement_Costs"},
-                {"name": "📋 Smart Procurement", "module": "17_Procurement_Recommendations", "path": "pages.procurement.17_Procurement_Recommendations"}
+                {"name": "🏆 Supplier Scorecards", "module": "15_Procurement_Suppliers", "path": f"{base}.procurement.15_Procurement_Suppliers"},
+                {"name": "💰 Cost Optimization", "module": "16_Procurement_Costs", "path": f"{base}.procurement.16_Procurement_Costs"},
+                {"name": "📋 Smart Procurement", "module": "17_Procurement_Recommendations", "path": f"{base}.procurement.17_Procurement_Recommendations"},
             ],
             "🌐 Digital Intelligence": [
-                {"name": "📊 Digital Overview", "module": "22_Digital_Overview", "path": "pages.digital_intelligence.22_Digital_Overview"},
-                {"name": "🛒 Ecommerce Analytics", "module": "23_Ecommerce_Analytics", "path": "pages.digital_intelligence.23_Ecommerce_Analytics"},
-                {"name": "🌐 Web Analytics", "module": "24_Web_Analytics", "path": "pages.digital_intelligence.24_Web_Analytics"},
-                {"name": "📱 Social Intelligence", "module": "25_Social_Media_Intel", "path": "pages.digital_intelligence.25_Social_Media_Intel"},
-                {"name": "⚡ Digital Operations", "module": "26_Digital_Operations", "path": "pages.digital_intelligence.26_Digital_Operations"}
+                {"name": "📊 Digital Overview", "module": "22_Digital_Overview", "path": f"{base}.digital_intelligence.22_Digital_Overview"},
+                {"name": "🛒 Ecommerce Analytics", "module": "23_Ecommerce_Analytics", "path": f"{base}.digital_intelligence.23_Ecommerce_Analytics"},
+                {"name": "🌐 Web Analytics", "module": "24_Web_Analytics", "path": f"{base}.digital_intelligence.24_Web_Analytics"},
+                {"name": "📱 Social Intelligence", "module": "25_Social_Media_Intel", "path": f"{base}.digital_intelligence.25_Social_Media_Intel"},
+                {"name": "⚡ Digital Operations", "module": "26_Digital_Operations", "path": f"{base}.digital_intelligence.26_Digital_Operations"},
             ],
             "⚙️ System Administration": [
-                {"name": "🔧 Tenant Management", "module": "18_Admin_Tenants", "path": "pages.admin.18_Admin_Tenants"},
-                {"name": "👥 User Management", "module": "19_Admin_Users", "path": "pages.admin.19_Admin_Users"},
-                {"name": "📊 System Analytics", "module": "20_Admin_Analytics", "path": "pages.admin.20_Admin_Analytics"}
-            ]
+                {"name": "🔧 Tenant Management", "module": "18_Admin_Tenants", "path": f"{base}.admin.18_Admin_Tenants"},
+                {"name": "👥 User Management", "module": "19_Admin_Users", "path": f"{base}.admin.19_Admin_Users"},
+                {"name": "📊 System Analytics", "module": "20_Admin_Analytics", "path": f"{base}.admin.20_Admin_Analytics"},
+            ],
         }
+
+    def get_module_path(self, page_name: str):
+        """Get the correct module path based on page name"""
+        base = APP_PAGES_PACKAGE
+        page_categories = self.get_page_categories()
+
+        # Search through all categories to find the module
+        for _, modules in page_categories.items():
+            for module in modules:
+                if module["module"] == page_name:
+                    return module["path"]
+
+        # Fallback logic for direct file access
+        if page_name == "00_Welcome":
+            return f"{base}.00_Welcome"
+        elif page_name.startswith("01_"):
+            return f"{base}.{page_name}"
+        elif page_name.startswith(("02_", "03_", "04_", "05_", "06_")):
+            return f"{base}.sales.{page_name}"
+        elif page_name.startswith(("07_", "08_", "09_", "10_")):
+            return f"{base}.inventory.{page_name}"
+        elif page_name.startswith(("11_", "12_", "13_", "14_")):
+            return f"{base}.logistics.{page_name}"
+        elif page_name.startswith(("15_", "16_", "17_")):
+            return f"{base}.procurement.{page_name}"
+        elif page_name.startswith(("22_", "23_", "24_", "25_", "26_")):
+            return f"{base}.digital_intelligence.{page_name}"
+        elif page_name.startswith(("18_", "19_", "20_")):
+            return f"{base}.admin.{page_name}"
+        else:
+            return f"{base}.{page_name}"
 
     def get_total_modules_count(self):
         """Calculate total number of available modules"""
         page_categories = self.get_page_categories()
         total_count = 0
-        for category, modules in page_categories.items():
+        for _, modules in page_categories.items():
             total_count += len(modules)
         return total_count
 
@@ -247,13 +284,13 @@ class LogisticsProEnterprise:
         # Tenant selector
         tenants = self.get_available_tenants()
         current_tenant = st.session_state.get('current_tenant', 'ELORA Holding')
-        
+
         selected_tenant = st.sidebar.selectbox(
             "Switch Organization",
             list(tenants.keys()),
             index=list(tenants.keys()).index(current_tenant) if current_tenant in tenants else 0
         )
-        
+
         if selected_tenant != current_tenant:
             st.session_state.current_tenant = selected_tenant
             st.session_state.tenant_id = tenants[selected_tenant]
@@ -274,7 +311,7 @@ class LogisticsProEnterprise:
         # 📊 EXECUTIVE COCKPIT (Single item, always visible)
         dashboard_module = page_categories["📊 Executive Cockpit"][0]
         if st.sidebar.button(
-            dashboard_module["name"], 
+            dashboard_module["name"],
             key=f"nav_{dashboard_module['module']}",
             use_container_width=True
         ):
@@ -289,7 +326,7 @@ class LogisticsProEnterprise:
         with st.sidebar.expander("📈 Sales Intelligence", expanded=False):
             for module in page_categories["📈 Sales Intelligence"]:
                 if st.button(
-                    module["name"], 
+                    module["name"],
                     key=f"nav_{module['module']}",
                     use_container_width=True
                 ):
@@ -302,7 +339,7 @@ class LogisticsProEnterprise:
         with st.sidebar.expander("📦 Inventory Intelligence", expanded=False):
             for module in page_categories["📦 Inventory Intelligence"]:
                 if st.button(
-                    module["name"], 
+                    module["name"],
                     key=f"nav_{module['module']}",
                     use_container_width=True
                 ):
@@ -315,7 +352,7 @@ class LogisticsProEnterprise:
         with st.sidebar.expander("🚛 Logistics Intelligence", expanded=False):
             for module in page_categories["🚛 Logistics Intelligence"]:
                 if st.button(
-                    module["name"], 
+                    module["name"],
                     key=f"nav_{module['module']}",
                     use_container_width=True
                 ):
@@ -328,7 +365,7 @@ class LogisticsProEnterprise:
         with st.sidebar.expander("🤝 Procurement Intelligence", expanded=False):
             for module in page_categories["🤝 Procurement Intelligence"]:
                 if st.button(
-                    module["name"], 
+                    module["name"],
                     key=f"nav_{module['module']}",
                     use_container_width=True
                 ):
@@ -341,7 +378,7 @@ class LogisticsProEnterprise:
         with st.sidebar.expander("🌐 Digital Intelligence", expanded=False):
             for module in page_categories["🌐 Digital Intelligence"]:
                 if st.button(
-                    module["name"], 
+                    module["name"],
                     key=f"nav_{module['module']}",
                     use_container_width=True
                 ):
@@ -356,7 +393,7 @@ class LogisticsProEnterprise:
             with st.sidebar.expander("⚙️ System Administration", expanded=False):
                 for module in page_categories["⚙️ System Administration"]:
                     if st.button(
-                        module["name"], 
+                        module["name"],
                         key=f"nav_{module['module']}",
                         use_container_width=True
                     ):
@@ -382,7 +419,7 @@ class LogisticsProEnterprise:
 
         # LOGOUT BUTTON (moved from top)
         if st.sidebar.button(
-            "🚪 Logout", 
+            "🚪 Logout",
             key="nav_logout",
             use_container_width=True,
             type="secondary"
@@ -458,51 +495,21 @@ class LogisticsProEnterprise:
             unsafe_allow_html=True
         )
 
-    def get_module_path(self, page_name: str):
-        """Get the correct module path based on page name"""
-        page_categories = self.get_page_categories()
-        
-        # Search through all categories to find the module
-        for category, modules in page_categories.items():
-            for module in modules:
-                if module["module"] == page_name:
-                    return module["path"]
-        
-        # Fallback logic for direct file access
-        if page_name == "00_Welcome":
-            return "pages.00_Welcome"
-        elif page_name.startswith("01_"):
-            return f"pages.{page_name}"
-        elif page_name.startswith(("02_", "03_", "04_", "05_", "06_")):
-            return f"pages.sales.{page_name}"
-        elif page_name.startswith(("07_", "08_", "09_", "10_")):
-            return f"pages.inventory.{page_name}"
-        elif page_name.startswith(("11_", "12_", "13_", "14_")):
-            return f"pages.logistics.{page_name}"
-        elif page_name.startswith(("15_", "16_", "17_")):
-            return f"pages.procurement.{page_name}"
-        elif page_name.startswith(("22_", "23_", "24_", "25_", "26_")):
-            return f"pages.digital_intelligence.{page_name}"
-        elif page_name.startswith(("18_", "19_", "20_")):
-            return f"pages.admin.{page_name}"
-        else:
-            return f"pages.{page_name}"
-
     def import_page_module(self, page_name: str):
         """Dynamically import page module"""
         try:
             # Get the correct module path
             module_path = self.get_module_path(page_name).replace('.py', '')
-        
+
             # Import the module
             module = importlib.import_module(module_path)
-        
+
             if hasattr(module, 'render'):
                 return module
             else:
                 logger.error(f"Page {page_name} missing 'render' function")
                 return None
-            
+
         except ImportError as e:
             logger.error(f"Cannot load {page_name}: {str(e)}")
             return None
@@ -562,7 +569,7 @@ class LogisticsProEnterprise:
             
             Please contact system administration.
             """)
-            
+
             # Provide debugging information
             with st.expander("Technical Details"):
                 st.code(f"""
@@ -603,9 +610,10 @@ class LogisticsProEnterprise:
             logger.error(f"Application error: {str(e)}")
             st.error("A system error occurred. Our team has been notified.")
 
+
 class AnalyticsEngine:
     """Core analytics and AI functionality"""
-    
+
     def __init__(self, data_generator):
         self.dg = data_generator
         # Initialize with fallbacks for all data types
@@ -613,24 +621,24 @@ class AnalyticsEngine:
             self.sales_data = data_generator.sales_data
         except:
             self.sales_data = pd.DataFrame()
-            
+
         try:
             self.inventory_data = data_generator.inventory_data
         except:
             self.inventory_data = pd.DataFrame()
-            
+
         try:
             self.logistics_data = data_generator.logistics_data
         except:
             self.logistics_data = pd.DataFrame()
-        
+
         # Initialize analytics engines with fallbacks
         try:
             from logistics_core.analytics.forecasting import DemandForecaster
             self.forecaster = DemandForecaster()
         except:
             self.forecaster = None
-        
+
         try:
             from logistics_core.analytics.optimization import RouteOptimizer, InventoryOptimizer
             self.route_optimizer = RouteOptimizer()
@@ -645,12 +653,13 @@ class AnalyticsEngine:
             # Sales KPIs
             if not self.sales_data.empty:
                 total_revenue = (self.sales_data['quantity'] * self.sales_data['unit_price']).sum()
-                recent_sales = self.sales_data[self.sales_data['date'] >= (datetime.now().date() - timedelta(days=30))]
+                recent_sales = self.sales_data[self.sales_data['date'] >= (
+                        datetime.now().date() - timedelta(days=30))]
                 recent_revenue = (recent_sales['quantity'] * recent_sales['unit_price']).sum()
             else:
                 total_revenue = 0
                 recent_revenue = 0
-            
+
             kpis = {
                 'monthly_revenue': recent_revenue,
                 'gross_margin_percent': np.random.uniform(18, 25),
@@ -665,6 +674,7 @@ class AnalyticsEngine:
         except Exception as e:
             logger.error(f"KPI calculation error: {e}")
             return {}
+
 
 # Application entry point
 if __name__ == "__main__":
