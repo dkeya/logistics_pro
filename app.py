@@ -63,6 +63,11 @@ class LogisticsProEnterprise:
         /* header {visibility: hidden;} */
         .stDeployButton {visibility: hidden;}
 
+        /* 🔒 Hide Streamlit's default multipage navigation ("app / Welcome / Dashboard") */
+        section[data-testid="stSidebarNav"] {
+            display: none !important;
+        }
+
         /* Main theme colors */
         :root {
             --primary: #1f77b4;
