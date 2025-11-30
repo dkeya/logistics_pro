@@ -56,20 +56,12 @@ class LogisticsProEnterprise:
         """Apply enterprise-grade custom styles"""
         st.markdown("""
         <style>
-        /* Enhanced CSS to hide Streamlit's default elements - SAFE VERSION */
+        /* Hide Streamlit chrome we don't want */
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         header {visibility: hidden;}
         .stDeployButton {visibility: hidden;}
-        
-        /* Hide Streamlit's default page navigation */
-        [data-testid="stSidebarNav"] {
-            display: none !important;
-        }
-        .css-1lcbmhc.e1fqkh3o0 {
-            display: none !important;
-        }
-        
+
         /* Main theme colors */
         :root {
             --primary: #1f77b4;
