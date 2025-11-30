@@ -67,8 +67,8 @@ class LogisticsProEnterprise:
         /* header {visibility: hidden;} */
         .stDeployButton {visibility: hidden;}
 
-        /* 🔒 Hide Streamlit's default multipage navigation ("app / Welcome / Dashboard") */
-        section[data-testid="stSidebarNav"] {
+        /* 🔒 Hide the top-right toolbar (Share, star, edit, GitHub) */
+        [data-testid="stToolbar"] {
             display: none !important;
         }
 
